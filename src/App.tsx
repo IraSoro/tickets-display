@@ -1,34 +1,46 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useCallback, useEffect, useState } from "react";
+import { Box, Grid } from "@mui/material";
+
+import { Ticket, TicketsResponse } from "./data/Ticket";
+import Item from "./components/Item";
+import Filters from "./components/Filters";
+
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+
+  const getTickets = useCallback(async () => {
+    const resp = await fetch("/tickets.json");
+    if (!resp.ok) {
+      throw new Error(`Failed to fetch tickets: ${await resp.json()}`);
+    }
+    const jsonData = (await resp.json()) as TicketsResponse;
+    return jsonData.tickets;
+  }, []);
+
+  useEffect(() => {
+    getTickets()
+      .then((tickets) => {
+        setTickets(tickets);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [getTickets]);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Box display="flex" p={2}>
+      <Filters />
+
+      <Grid container spacing={2} sx={{ width: "75%" }}>
+        {tickets.map((ticket, i) => (
+          <Grid item key={i}>
+            <Item ticket={ticket} />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   );
 }
 
