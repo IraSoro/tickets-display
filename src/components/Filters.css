@@ -1,7 +1,7 @@
-.filters-card{
-    width: 100%;
-    max-width: 300px;
-    height: 300px;
+.filters-card {
+  width: 100%;
+  max-width: 300px;
+  height: 400px;
 
-    border-radius: 20px !important;
+  border-radius: 20px !important;
 }
