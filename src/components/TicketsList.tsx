@@ -1,6 +1,8 @@
-import { Card, CardContent, Grid, List, Typography } from "@mui/material";
+import { Card, CardContent, Grid, Typography } from "@mui/material";
 
 import { Ticket } from "../data/Ticket";
+
+import "./TicketsList.css";
 
 interface ItemProps {
   ticket: Ticket;
@@ -8,7 +10,7 @@ interface ItemProps {
 
 const Item = ({ ticket }: ItemProps) => {
   return (
-    <Card style={{ maxWidth: "800px", width: "100%" }}>
+    <Card className="ticket-card" elevation={0}>
       <CardContent>
         <Typography variant="h6">{ticket.arrival_date}</Typography>
         <Typography variant="body2" color="text.secondary">
@@ -25,13 +27,13 @@ interface TicketsListProps {
 
 const TicketsList = ({ tickets }: TicketsListProps) => {
   return (
-    <List>
+    <Grid container direction="column" spacing={2}>
       {tickets.map((ticket, i) => (
         <Grid item key={i}>
           <Item ticket={ticket} />
         </Grid>
       ))}
-    </List>
+    </Grid>
   );
 };
 

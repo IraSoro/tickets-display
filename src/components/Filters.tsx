@@ -1,8 +1,10 @@
 import { Card, CardContent, Typography } from "@mui/material";
 
+import "./Filters.css";
+
 const Filters = () => {
   return (
-    <Card sx={{ maxWidth: "300px", width: "100%", height: "300px" }}>
+    <Card className="filters-card" elevation={0}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           Filters
