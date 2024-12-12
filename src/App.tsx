@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import { Ticket, TicketsResponse } from "./data/Ticket";
-import Item from "./components/Item";
+import TicketsList from "./components/TicketsList";
 import Filters from "./components/Filters";
 
 import "./App.css";
@@ -30,17 +30,18 @@ function App() {
   }, [getTickets]);
 
   return (
-    <Box display="flex" p={2}>
-      <Filters />
-
-      <Grid container spacing={2} sx={{ width: "75%" }}>
-        {tickets.map((ticket, i) => (
-          <Grid item key={i}>
-            <Item ticket={ticket} />
+    <div className="main-container">
+      <div className="outer-container">
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={3} md={3}>
+            <Filters />
           </Grid>
-        ))}
-      </Grid>
-    </Box>
+          <Grid item xs={12} sm={9} md={9}>
+            <TicketsList tickets={tickets} />
+          </Grid>
+        </Grid>
+      </div>
+    </div>
   );
 }
 

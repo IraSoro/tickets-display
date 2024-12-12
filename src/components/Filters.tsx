@@ -2,7 +2,7 @@ import { Card, CardContent, Typography } from "@mui/material";
 
 const Filters = () => {
   return (
-    <Card sx={{ width: "25%", mr: 2 }}>
+    <Card sx={{ maxWidth: "300px", width: "100%", height: "300px" }}>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           Filters
