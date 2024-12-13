@@ -100,7 +100,7 @@ const Item = (props: ItemProps) => {
       }}
     >
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={3} sm={3}>
+        <Grid item xs={4} sm={3}>
           <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
             {`${props.currency.symbol} ${price}`}
           </Typography>
@@ -122,7 +122,7 @@ const Item = (props: ItemProps) => {
           <Divider orientation="vertical" />
         </Grid>
 
-        <Grid item xs={8} sm={8} container spacing={2}>
+        <Grid item xs={7} sm={8} container spacing={2}>
           <Grid item xs={12} sm={4} textAlign="center">
             <FlightDetails
               date={props.ticket.departure_date}
