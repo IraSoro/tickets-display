@@ -1,9 +1,54 @@
 import { useEffect, useState } from "react";
-import { Button, Card, Divider, Grid, Typography } from "@mui/material";
+import {
+  Button,
+  Card,
+  Divider,
+  Grid,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 
 import { Ticket } from "../data/Ticket";
 import { CurrencyInfo } from "../data/Currency";
 import { RespCurrencyRates } from "../utils/fakeCurrencyApi";
+
+interface FlightDetailsProps {
+  time: string;
+  date: string;
+  airportCode: string;
+  city: string;
+}
+
+const FlightDetails = (props: FlightDetailsProps) => {
+  const isSmallScreen = useMediaQuery("(max-width:600px)");
+
+  return (
+    <>
+      <Typography
+        variant="h4"
+        sx={{
+          fontSize: {
+            xs: "1.5rem",
+            sm: "2rem",
+            md: "2.2rem",
+          },
+        }}
+      >
+        {props.time}
+      </Typography>
+      <Typography variant="body1" color="text.secondary">
+        {isSmallScreen
+          ? props.airportCode
+          : `${props.airportCode}, ${props.city}`}
+      </Typography>
+      {!isSmallScreen && (
+        <Typography variant="body1" color="text.secondary">
+          {props.date}
+        </Typography>
+      )}
+    </>
+  );
+};
 
 interface ItemProps {
   ticket: Ticket;
@@ -51,8 +96,8 @@ const Item = (props: ItemProps) => {
         padding: 2,
         alignItems: "center",
         borderRadius: "20px",
+        boxShadow: "none",
       }}
-      elevation={0}
     >
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={3} sm={3}>
@@ -62,7 +107,12 @@ const Item = (props: ItemProps) => {
           <Button
             variant="contained"
             color="warning"
-            sx={{ boxShadow: "none", borderRadius: 5, width: 150 }}
+            sx={{
+              boxShadow: "none",
+              borderRadius: 5,
+              maxWidth: 150,
+              width: "100%",
+            }}
           >
             Купить
           </Button>
@@ -74,13 +124,12 @@ const Item = (props: ItemProps) => {
 
         <Grid item xs={8} sm={8} container spacing={2}>
           <Grid item xs={12} sm={4} textAlign="center">
-            <Typography variant="h4">{props.ticket.departure_time}</Typography>
-            <Typography variant="body1" color="text.secondary">
-              {`${props.ticket.origin}, ${props.ticket.origin_name}`}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {props.ticket.departure_date}
-            </Typography>
+            <FlightDetails
+              date={props.ticket.departure_date}
+              time={props.ticket.departure_time}
+              airportCode={props.ticket.origin}
+              city={props.ticket.origin_name}
+            />
           </Grid>
 
           <Grid item xs={12} sm={4} textAlign="center">
@@ -89,13 +138,12 @@ const Item = (props: ItemProps) => {
           </Grid>
 
           <Grid item xs={12} sm={4} textAlign="center">
-            <Typography variant="h4">{props.ticket.arrival_time}</Typography>
-            <Typography variant="body1" color="text.secondary">
-              {`${props.ticket.destination}, ${props.ticket.destination_name}`}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {props.ticket.arrival_date}
-            </Typography>
+            <FlightDetails
+              date={props.ticket.arrival_date}
+              time={props.ticket.arrival_time}
+              airportCode={props.ticket.destination}
+              city={props.ticket.destination_name}
+            />
           </Grid>
         </Grid>
       </Grid>
