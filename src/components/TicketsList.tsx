@@ -3,37 +3,44 @@ import { Button, Card, Divider, Grid, Typography } from "@mui/material";
 
 import { Ticket } from "../data/Ticket";
 import { CurrencyInfo } from "../data/Currency";
-import {
-  fetchFakeCurrencyRates,
-  RespCurrencyRates,
-} from "../utils/fakeCurrencyApi";
-
-import "./TicketsList.css";
+import { RespCurrencyRates } from "../utils/fakeCurrencyApi";
 
 interface ItemProps {
   ticket: Ticket;
   currency: CurrencyInfo;
-  rates: RespCurrencyRates;
+  exchange: RespCurrencyRates;
 }
 
 const Item = (props: ItemProps) => {
   const [price, setPrice] = useState(props.ticket.price);
 
+  const calculationPrice = (base: number, rate: number) => {
+    return Math.round(base / rate);
+  };
+
   useEffect(() => {
+    let newPrice = 0;
     switch (props.currency.code) {
       case "RU":
-        setPrice(props.ticket.price);
+        newPrice = props.ticket.price;
         break;
       case "USD":
-        setPrice(Math.round(props.ticket.price / props.rates.rates.USD));
+        newPrice = calculationPrice(
+          props.ticket.price,
+          props.exchange.rates.USD
+        );
         break;
       case "EUR":
-        setPrice(Math.round(props.ticket.price / props.rates.rates.EUR));
+        newPrice = calculationPrice(
+          props.ticket.price,
+          props.exchange.rates.EUR
+        );
         break;
       default:
-        break;
+        return;
     }
-  }, [props.currency]);
+    setPrice(newPrice);
+  }, [props.currency, props.ticket.price, props.exchange.rates]);
 
   return (
     <Card
@@ -99,27 +106,19 @@ const Item = (props: ItemProps) => {
 interface TicketsListProps {
   tickets: Ticket[];
   currency: CurrencyInfo;
+  rates: RespCurrencyRates;
 }
 
 const TicketsList = (props: TicketsListProps) => {
-  const [rates, setRates] = useState<RespCurrencyRates>({
-    base: "RU",
-    rates: { USD: 1, EUR: 1 },
-  });
-
-  useEffect(() => {
-    fetchFakeCurrencyRates()
-      .then((data) => {
-        setRates(data as RespCurrencyRates);
-      })
-      .catch((error) => console.error("Error:", error));
-  }, [props.currency]);
-
   return (
     <Grid container direction="column" spacing={2}>
       {props.tickets.map((ticket, i) => (
         <Grid item key={i}>
-          <Item ticket={ticket} currency={props.currency} rates={rates} />
+          <Item
+            ticket={ticket}
+            currency={props.currency}
+            exchange={props.rates}
+          />
         </Grid>
       ))}
     </Grid>

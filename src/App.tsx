@@ -6,12 +6,21 @@ import TicketsList from "./components/TicketsList";
 import Filters from "./components/Filters";
 
 import { currencies } from "./data/Currency";
+import {
+  fetchFakeCurrencyRates,
+  RespCurrencyRates,
+} from "./utils/fakeCurrencyApi";
 
 import "./App.css";
 
 function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currency, setCurrency] = useState(currencies[0]);
+  const [rates, setRates] = useState<RespCurrencyRates>({
+    base: "RU",
+    rates: { USD: 1, EUR: 1 },
+  });
+
   const [stops, setStops] = useState([true, true, true, true]);
 
   const getTickets = useCallback(async () => {
@@ -33,6 +42,14 @@ function App() {
       });
   }, [getTickets, stops]);
 
+  useEffect(() => {
+    fetchFakeCurrencyRates()
+      .then((data) => {
+        setRates(data as RespCurrencyRates);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
   return (
     <div className="main-container">
       <div className="outer-container">
@@ -46,7 +63,7 @@ function App() {
             />
           </Grid>
           <Grid item xs={12} sm={9} md={9}>
-            <TicketsList tickets={tickets} currency={currency} />
+            <TicketsList tickets={tickets} currency={currency} rates={rates} />
           </Grid>
         </Grid>
       </div>
