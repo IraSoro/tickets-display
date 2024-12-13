@@ -20,7 +20,6 @@ const Item = (props: ItemProps) => {
   const [price, setPrice] = useState(props.ticket.price);
 
   useEffect(() => {
-    console.log("currency = ", props.currency);
     switch (props.currency.code) {
       case "RU":
         setPrice(props.ticket.price);

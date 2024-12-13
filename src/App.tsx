@@ -26,12 +26,12 @@ function App() {
   useEffect(() => {
     getTickets()
       .then((tickets) => {
-        setTickets(tickets);
+        setTickets(tickets.filter((ticket) => stops[ticket.stops] === true));
       })
       .catch((err) => {
         console.log(err);
       });
-  }, [getTickets]);
+  }, [getTickets, stops]);
 
   return (
     <div className="main-container">

@@ -89,7 +89,6 @@ const Transplants = (props: TransplantsProps) => {
             <Checkbox
               checked={allChecked}
               onChange={(e) => {
-                console.log(e.target.checked);
                 setAllChecked(e.target.checked);
                 if (e.target.checked === true) {
                   props.setStops([true, true, true, true]);
