@@ -12,6 +12,7 @@ import "./App.css";
 function App() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currency, setCurrency] = useState(currencies[0]);
+  const [stops, setStops] = useState([true, true, true, true]);
 
   const getTickets = useCallback(async () => {
     const resp = await fetch("/tickets.json");
@@ -37,10 +38,15 @@ function App() {
       <div className="outer-container">
         <Grid container spacing={2}>
           <Grid item xs={12} sm={3} md={3}>
-            <Filters currency={currency} setCurrency={setCurrency} />
+            <Filters
+              currency={currency}
+              setCurrency={setCurrency}
+              stops={stops}
+              setStops={setStops}
+            />
           </Grid>
           <Grid item xs={12} sm={9} md={9}>
-            <TicketsList tickets={tickets} currency={currency}/>
+            <TicketsList tickets={tickets} currency={currency} />
           </Grid>
         </Grid>
       </div>

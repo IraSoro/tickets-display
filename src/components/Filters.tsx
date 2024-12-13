@@ -61,7 +61,13 @@ const Currency = (props: CurrencyProps) => {
   );
 };
 
-const Transplants = () => {
+interface TransplantsProps {
+  stops: boolean[];
+  setStops: (newStops: boolean[]) => void;
+}
+
+const Transplants = (props: TransplantsProps) => {
+  const [allChecked, setAllChecked] = useState(true);
   const options = [
     "Без пересадок",
     "1 пересадка",
@@ -69,17 +75,6 @@ const Transplants = () => {
     "3 пересадки",
   ];
 
-  const [selectTransplant, setSelectTransplant] = useState([0, 1, 2, 3]);
-  const updateTransplant = (value: number) => {
-    console.log(selectTransplant);
-    setSelectTransplant((prev) => {
-      if (prev.includes(value)) {
-        return prev.filter((item) => item !== value);
-      } else {
-        return [...prev, value];
-      }
-    });
-  };
   return (
     <>
       <Typography
@@ -89,15 +84,37 @@ const Transplants = () => {
         Количество пересадок
       </Typography>
       <FormGroup>
-        <FormControlLabel control={<Checkbox defaultChecked />} label="Все" />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={allChecked}
+              onChange={(e) => {
+                console.log(e.target.checked);
+                setAllChecked(e.target.checked);
+                if (e.target.checked === true) {
+                  props.setStops([true, true, true, true]);
+                }
+              }}
+            />
+          }
+          label="Все"
+        />
         {options.map((option, i) => (
           <FormControlLabel
             key={i}
             control={
               <Checkbox
-                onChange={() => {
-                  console.log("change");
-                  updateTransplant(i);
+                checked={props.stops[i]}
+                onChange={(e) => {
+                  props.stops[i] = e.target.checked;
+                  props.setStops([...props.stops]);
+                  if (e.target.checked === false) {
+                    setAllChecked(false);
+                    return;
+                  }
+                  if (!props.stops.includes(false)) {
+                    setAllChecked(true);
+                  }
                 }}
               />
             }
@@ -112,6 +129,9 @@ const Transplants = () => {
 interface FiltersProps {
   currency: CurrencyInfo;
   setCurrency: (newCurrency: CurrencyInfo) => void;
+
+  stops: boolean[];
+  setStops: (newStops: boolean[]) => void;
 }
 
 const Filters = (props: FiltersProps) => {
@@ -122,7 +142,7 @@ const Filters = (props: FiltersProps) => {
           currency={props.currency}
           updateCurrency={props.setCurrency}
         />
-        <Transplants />
+        <Transplants stops={props.stops} setStops={props.setStops} />
       </CardContent>
     </Card>
   );
