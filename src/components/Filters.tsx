@@ -10,19 +10,19 @@ import {
   Typography,
 } from "@mui/material";
 
+import { CurrencyInfo, currencies } from "../data/Currency";
+
 import "./Filters.css";
 
 interface CurrencyProps {
-  currencyArr: string[];
-  updateCurrency: (newCurrency: string) => void;
+  currency: CurrencyInfo;
+  updateCurrency: (newCurrency: CurrencyInfo) => void;
 }
 
 const Currency = (props: CurrencyProps) => {
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    props.currencyArr[0]
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState(props.currency);
 
-  const handleClick = (currency: string) => {
+  const handleClick = (currency: CurrencyInfo) => {
     setSelectedCurrency(currency);
     props.updateCurrency(currency);
   };
@@ -33,24 +33,27 @@ const Currency = (props: CurrencyProps) => {
         Валюта
       </Typography>
       <ButtonGroup variant="outlined" size="large">
-        {props.currencyArr.map((currency) => (
+        {currencies.map((currency) => (
           <Button
-            key={currency}
+            key={currency.code}
             onClick={() => handleClick(currency)}
             sx={{
               borderRadius: "8px",
               bgcolor:
-                selectedCurrency === currency ? "primary.main" : "transparent",
-              color: selectedCurrency === currency ? "white" : "inherit",
+                selectedCurrency.code === currency.code
+                  ? "primary.main"
+                  : "transparent",
+              color:
+                selectedCurrency.code === currency.code ? "white" : "inherit",
               "&:hover": {
                 bgcolor:
-                  selectedCurrency === currency
+                  selectedCurrency.code === currency.code
                     ? "primary.dark"
                     : "rgba(0, 0, 0, 0.08)",
               },
             }}
           >
-            {currency}
+            {currency.code}
           </Button>
         ))}
       </ButtonGroup>
@@ -106,16 +109,19 @@ const Transplants = () => {
   );
 };
 
-const Filters = () => {
-  const currencies = ["RU", "USD", "EUR"];
-  const updateCurrency = (newCurrency: string) => {
-    console.log("update currency: ", newCurrency);
-  };
+interface FiltersProps {
+  currency: CurrencyInfo;
+  setCurrency: (newCurrency: CurrencyInfo) => void;
+}
 
+const Filters = (props: FiltersProps) => {
   return (
     <Card className="filters-card" elevation={0}>
       <CardContent>
-        <Currency currencyArr={currencies} updateCurrency={updateCurrency} />
+        <Currency
+          currency={props.currency}
+          updateCurrency={props.setCurrency}
+        />
         <Transplants />
       </CardContent>
     </Card>

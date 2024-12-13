@@ -1,14 +1,41 @@
+import { useEffect, useState } from "react";
 import { Button, Card, Divider, Grid, Typography } from "@mui/material";
 
 import { Ticket } from "../data/Ticket";
+import { CurrencyInfo } from "../data/Currency";
+import {
+  fetchFakeCurrencyRates,
+  RespCurrencyRates,
+} from "../utils/fakeCurrencyApi";
 
 import "./TicketsList.css";
 
 interface ItemProps {
   ticket: Ticket;
+  currency: CurrencyInfo;
+  rates: RespCurrencyRates;
 }
 
-const Item = ({ ticket }: ItemProps) => {
+const Item = (props: ItemProps) => {
+  const [price, setPrice] = useState(props.ticket.price);
+
+  useEffect(() => {
+    console.log("currency = ", props.currency);
+    switch (props.currency.code) {
+      case "RU":
+        setPrice(props.ticket.price);
+        break;
+      case "USD":
+        setPrice(Math.round(props.ticket.price / props.rates.rates.USD));
+        break;
+      case "EUR":
+        setPrice(Math.round(props.ticket.price / props.rates.rates.EUR));
+        break;
+      default:
+        break;
+    }
+  }, [props.currency]);
+
   return (
     <Card
       sx={{
@@ -24,7 +51,7 @@ const Item = ({ ticket }: ItemProps) => {
       <Grid container spacing={2} alignItems="center">
         <Grid item xs={3} sm={3}>
           <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
-            {`$ ${ticket.price}`}
+            {`${props.currency.symbol} ${price}`}
           </Typography>
           <Button
             variant="contained"
@@ -41,27 +68,27 @@ const Item = ({ ticket }: ItemProps) => {
 
         <Grid item xs={8} sm={8} container spacing={2}>
           <Grid item xs={12} sm={4} textAlign="center">
-            <Typography variant="h4">{ticket.departure_time}</Typography>
+            <Typography variant="h4">{props.ticket.departure_time}</Typography>
             <Typography variant="body1" color="text.secondary">
-              {`${ticket.origin}, ${ticket.origin_name}`}
+              {`${props.ticket.origin}, ${props.ticket.origin_name}`}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {ticket.departure_date}
+              {props.ticket.departure_date}
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={4} textAlign="center">
-            <Typography variant="body2">{`Пересадок: ${ticket.stops}`}</Typography>
-            <Divider sx={{ width: "100%" }} />
+            <Typography variant="body2">{`Пересадок: ${props.ticket.stops}`}</Typography>
+            <Divider />
           </Grid>
 
           <Grid item xs={12} sm={4} textAlign="center">
-            <Typography variant="h4">{ticket.arrival_time}</Typography>
+            <Typography variant="h4">{props.ticket.arrival_time}</Typography>
             <Typography variant="body1" color="text.secondary">
-              {`${ticket.destination}, ${ticket.destination_name}`}
+              {`${props.ticket.destination}, ${props.ticket.destination_name}`}
             </Typography>
             <Typography variant="body1" color="text.secondary">
-              {ticket.arrival_date}
+              {props.ticket.arrival_date}
             </Typography>
           </Grid>
         </Grid>
@@ -72,14 +99,28 @@ const Item = ({ ticket }: ItemProps) => {
 
 interface TicketsListProps {
   tickets: Ticket[];
+  currency: CurrencyInfo;
 }
 
-const TicketsList = ({ tickets }: TicketsListProps) => {
+const TicketsList = (props: TicketsListProps) => {
+  const [rates, setRates] = useState<RespCurrencyRates>({
+    base: "RU",
+    rates: { USD: 1, EUR: 1 },
+  });
+
+  useEffect(() => {
+    fetchFakeCurrencyRates()
+      .then((data) => {
+        setRates(data as RespCurrencyRates);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, [props.currency]);
+
   return (
     <Grid container direction="column" spacing={2}>
-      {tickets.map((ticket, i) => (
+      {props.tickets.map((ticket, i) => (
         <Grid item key={i}>
-          <Item ticket={ticket} />
+          <Item ticket={ticket} currency={props.currency} rates={rates} />
         </Grid>
       ))}
     </Grid>
