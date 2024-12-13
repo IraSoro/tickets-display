@@ -12,8 +12,6 @@ import {
 
 import { CurrencyInfo, currencies } from "../data/Currency";
 
-import "./Filters.css";
-
 interface CurrencyProps {
   currency: CurrencyInfo;
   updateCurrency: (newCurrency: CurrencyInfo) => void;
@@ -135,7 +133,14 @@ interface FiltersProps {
 
 const Filters = (props: FiltersProps) => {
   return (
-    <Card className="filters-card" elevation={0}>
+    <Card
+      sx={{
+        maxWidth: 300,
+        height: 400,
+        borderRadius: "20px",
+      }}
+      elevation={0}
+    >
       <CardContent>
         <Currency
           currency={props.currency}
